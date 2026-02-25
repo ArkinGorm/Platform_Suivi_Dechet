@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const sensorsController = require('./sensors.controller');
+const demoAuth = require('../../common/middlewares/demoAuth')
 
 // Route pour recevoir les données d'un capteur
-router.post('/data', sensorsController.receiveData);
+router.post('/data', demoAuth, sensorsController.receiveData);
 
 // Route pour obtenir la dernière lecture d'un capteur
 router.get('/:capteur_id/last', sensorsController.getLastData);

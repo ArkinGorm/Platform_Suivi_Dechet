@@ -11,7 +11,9 @@ const notificationsRoutes = require('./modules/notifications/notifications.route
 const usersRoutes = require('./modules/users/users.routes');
 const analyticsRoutes = require('./modules/analytics/analytics.routes');
 const collectesRoutes = require('./modules/collectes/collectes.routes');
-
+const exportsRoutes = require('./modules/exports/exports.routes');
+const routesRourtes = require('./modules/routes/routes.routes');
+const predictionsRoutes = require('./modules/predictions/predictions.routes');
 const app = express();
 
 // Middlewares globaux
@@ -27,6 +29,9 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/collectes', collectesRoutes);
+app.use('/api/exports', exportsRoutes);
+app.use('/api/routes', routesRourtes);
+app.use('/api/predictions', predictionsRoutes);
 
 // Route de test
 app.get('/api/health', (req, res) => {

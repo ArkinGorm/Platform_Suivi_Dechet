@@ -2,17 +2,19 @@ const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
-  user: process.env.DB_USER,
   host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   port: process.env.DB_PORT,
+  ssl: {
+    rejectUnauthorized: false  // Important pour Neon
+  }
 });
 
-// Test de connexion
 pool.connect((err, client, release) => {
   if (err) {
-    console.error(' Erreur de connexion à la BDD:', err.stack);
+    console.error(' Erreur de connexion à PostgreSQL:', err.message);
   } else {
     console.log(' Connecté à PostgreSQL');
     release();
