@@ -10,13 +10,11 @@ const QuickActions = ({ role }) => {
     ],
     municipalite: [
       { to: '/bins', label: 'Gérer les bacs', icon: '🗑️', color: 'bg-green-500' },
-      { to: '/reports', label: 'Signalements', icon: '📋', color: 'bg-yellow-500' },
-      { to: '/collectes', label: 'Collectes', icon: '🚛', color: 'bg-purple-500' }
+      { to: '/reports', label: 'Signalements', icon: '📋', color: 'bg-yellow-500' }
     ],
     admin: [
       { to: '/admin', label: 'Administration', icon: '⚙️', color: 'bg-red-500' },
-      { to: '/bins', label: 'Gérer les bacs', icon: '🗑️', color: 'bg-green-500' },
-      { to: '/users', label: 'Utilisateurs', icon: '👥', color: 'bg-blue-500' }
+      { to: '/bins', label: 'Gérer les bacs', icon: '🗑️', color: 'bg-green-500' }
     ]
   };
 

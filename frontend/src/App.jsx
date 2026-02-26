@@ -12,6 +12,9 @@ import RoleBasedRoute from './components/Auth/RoleBasedRoute';
 import AdminPage from './pages/AdminPage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import MunicipalitePage from './pages/MunicipalitePage';
+import NotificationsPage from './pages/NotificationsPage';
+import ReportsPage from './pages/ReportsPage';
+import AdminAddBacPage from './pages/AdminAddBacPage';
 
 // Route protégée
 const ProtectedRoute = ({ children }) => {
@@ -54,6 +57,18 @@ function AppContent() {
               </RoleBasedRoute>
             } />
 
+            <Route path="/notifications" element={
+              <RoleBasedRoute>
+                <NotificationsPage />
+              </RoleBasedRoute>
+            } />
+
+            <Route path="/reports" element={
+              <RoleBasedRoute>
+                <ReportsPage />
+              </RoleBasedRoute>
+            } />
+
             <Route path="/profile" element={
               <ProtectedRoute>
                 <ProfilePage />
@@ -75,6 +90,12 @@ function AppContent() {
             <Route path="/municipalite" element={
               <RoleBasedRoute allowedRoles={['municipalite', 'admin']}>
                 <MunicipalitePage />
+              </RoleBasedRoute>
+            } />
+
+            <Route path="/admin/add-bac" element={
+              <RoleBasedRoute allowedRoles={['admin', 'municipalite']}>
+                <AdminAddBacPage />
               </RoleBasedRoute>
             } />
 

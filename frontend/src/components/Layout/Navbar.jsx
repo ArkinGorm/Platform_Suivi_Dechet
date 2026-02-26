@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { notificationService } from '../../services/notificationService';
 
 const Navbar = () => {
   const { user, isAuthenticated, isMunicipalite, isAdmin, logout } = useAuth();
+  const [notifCount, setNotifCount] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Charger le nombre de notifications non lues
+      notificationService.getUnread()
+        .then(res => setNotifCount(res.data.unread || 0))
+        .catch(err => console.error('Erreur chargement notifications:', err));
+    }
+  }, [isAuthenticated]);
 
   const handleLogout = () => {
     logout();
@@ -21,7 +32,7 @@ const Navbar = () => {
           </Link>
 
           {/* Liens de navigation */}
-          <div className="flex space-x-4">
+          <div className="flex items-center space-x-4">
             <Link to="/" className="hover:bg-green-700 px-3 py-2 rounded">
               Accueil
             </Link>
@@ -32,16 +43,31 @@ const Navbar = () => {
                   Dashboard
                 </Link>
 
-                {isMunicipalite && (
+                {/* Notifications avec compteur */}
+                <Link to="/notifications" className="relative hover:bg-green-700 px-3 py-2 rounded">
+                  🔔
+                  {notifCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {notifCount}
+                    </span>
+                  )}
+                </Link>
+
+                {/*{isMunicipalite && (
                   <Link to="/bins" className="hover:bg-green-700 px-3 py-2 rounded">
                     Bacs
                   </Link>
-                )}
+                )}*/}
 
                 {isAdmin && (
-                  <Link to="/admin" className="hover:bg-green-700 px-3 py-2 rounded">
-                    Administration
-                  </Link>
+                  <>
+                    <Link to="/admin" className="hover:bg-green-700 px-3 py-2 rounded">
+                      Administration
+                    </Link>
+                    {/* <Link to="/admin/add-bac" className="hover:bg-green-700 px-3 py-2 rounded"> 
+                      + Ajouter un bac
+                    </Link>*/}
+                  </>
                 )}
 
                 <Link to="/profile" className="hover:bg-green-700 px-3 py-2 rounded">

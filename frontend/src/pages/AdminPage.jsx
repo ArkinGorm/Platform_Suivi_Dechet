@@ -16,6 +16,12 @@ const AdminPage = () => {
       color: 'bg-green-500'
     },
     {
+      title: '➕ Ajouter un bac',
+      description: 'Créer un nouveau bac (public ou pour un citoyen)',
+      link: '/admin/add-bac',
+      color: 'bg-green-600'
+    },
+    {
       title: '📋 Signalements',
       description: 'Voir et traiter tous les signalements',
       link: '/admin/reports',
