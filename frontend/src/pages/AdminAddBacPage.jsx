@@ -23,7 +23,7 @@ const AdminAddBacPage = () => {
     setMessage('');
 
     try {
-      const response = await api.post('/bins', formData);
+      const response = await api.post('api/bins', formData);
       setMessage('✅ Bac ajouté avec succès');
       console.log('Bac créé:', response.data);
       setFormData({
@@ -35,8 +35,10 @@ const AdminAddBacPage = () => {
         proprietaire_id: ''
       });
     } catch (error) {
-      console.error('Erreur complète:', error.response?.data);
-      setMessage('❌ Erreur : ' + (error.response?.data?.error || 'Erreur inconnue'));
+      console.error('Erreur complète:', error);
+      console.error('Message:', error.message);
+      console.error('Response:', error.response);
+      setMessage('❌ Erreur : ' + (error.message || 'Erreur inconnue'));
     } finally {
       setLoading(false);
     }

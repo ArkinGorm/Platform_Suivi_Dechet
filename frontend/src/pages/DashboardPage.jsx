@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { bacService } from '../services/bacService';
 import { reportService } from '../services/reportService';
 import { notificationService } from '../services/notificationService';
+import { dashboardService } from '../services/dashboardService';
 import KPICards from '../components/Dashboard/KPICards';
 import QuickActions from '../components/Dashboard/QuickActions';
 
@@ -18,40 +19,39 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
+
         if (role === 'citoyen') {
-          // Charger les bacs du citoyen
-          const bacsRes = await bacService.getMesBacs();
+          // Données pour citoyen
+          const [bacsRes, signalementsRes, notifRes] = await Promise.all([
+            bacService.getMesBacs(),
+            reportService.getMesSignalements(),
+            notificationService.getUnread()
+          ]);
+
           setMesBacs(bacsRes.data);
-
-          // Charger ses signalements
-          const signalementsRes = await reportService.getMesSignalements();
           setMesSignalements(signalementsRes.data);
+          setNotifications(notifRes.data.notifications || []);
 
-          // Charger ses notifications non lues
-          const notifRes = await notificationService.getUnread();
-          setNotifications(notifRes.data);
-
-          // Données pour les KPIs
           setKpiData({
             bacs: { total: bacsRes.data.length },
             signalements: { total: signalementsRes.data.length },
-            notifications: { non_lues: notifRes.data.unread }
+            notifications: { non_lues: notifRes.data.unread || 0 }
           });
-        } else {
-          // Pour municipalité/admin : données globales
-          // À adapter selon ton API
-          setKpiData({
-            bacs: { total: 45, rouges: 8, taux_remplissage_moyen: 67.5 },
-            signalements: { en_attente: 5 }
-          });
+        } 
+        else {
+          // Données pour municipalité/admin via l'API analytics
+          const kpiRes = await dashboardService.getKPI();
+          setKpiData(kpiRes.data);
         }
-      } catch (err) {
-        setError('Erreur lors du chargement des données');
-        console.error(err);
+      } catch (error) {
+        console.error('Erreur chargement dashboard:', error);
+        setError('Impossible de charger les données');
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, [role]);
 
