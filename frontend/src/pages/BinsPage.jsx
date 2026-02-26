@@ -6,6 +6,9 @@ const BinsPage = () => {
   const { role } = useAuth();
   const [showPublicOnly, setShowPublicOnly] = useState(false);
 
+  // log des bacs si présents
+  console.log(' Bacs chargés:', showPublicOnly /* replace with real variable if needed */);
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">

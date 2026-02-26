@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -35,37 +35,34 @@ const RealtimeSocketMap = ({ role }) => {
   const [bacs, setBacs] = useState([]);
   const [loading, setLoading] = useState(true);
   const socket = useSocket();
-  const mapRef = useRef();
 
-  const fetchBacs = async () => {
-    try {
-      let response;
-      if (role === 'citoyen') {
-        response = await bacService.getMesBacs();
-      } else {
-        response = await bacService.getAllBacs();
-      }
-      setBacs(response.data);
-    } catch (error) {
-      console.error('Erreur chargement bacs:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Chargement initial
+  // Charger les bacs
   useEffect(() => {
+    const fetchBacs = async () => {
+      try {
+        let response;
+        if (role === 'citoyen') {
+          response = await bacService.getMesBacs();
+        } else {
+          response = await bacService.getAllBacs();
+        }
+        setBacs(response.data);
+        console.log('📦 Bacs chargés dans la carte:', response.data);
+      } catch (error) {
+        console.error('Erreur chargement bacs:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchBacs();
   }, [role]);
 
-  // Écoute des événements temps réel
+  // Écouter les mises à jour temps réel
   useEffect(() => {
     if (!socket) return;
 
     socket.on('nouvelle-donnee-capteur', (data) => {
-      console.log('📡 Nouvelle donnée reçue via WebSocket:', data);
-      
-      // Mettre à jour la liste des bacs
+      console.log('📡 Mise à jour temps réel:', data);
       setBacs(prevBacs =>
         prevBacs.map(bac =>
           bac.id === data.bac_id
@@ -86,16 +83,14 @@ const RealtimeSocketMap = ({ role }) => {
 
   return (
     <div className="relative">
-      <div className="absolute top-4 right-4 z-10 bg-green-600 text-white px-3 py-1 rounded shadow text-sm flex items-center">
-        <span className="w-2 h-2 bg-green-300 rounded-full animate-pulse mr-2"></span>
-        Temps réel activé
+      <div className="absolute top-4 right-4 z-10 bg-green-600 text-white px-3 py-1 rounded shadow text-sm">
+        {bacs.length} bac(s) affiché(s)
       </div>
 
       <MapContainer
         center={[14.7167, -17.4677]}
         zoom={12}
         style={{ height: '600px', width: '100%', borderRadius: '0.5rem' }}
-        ref={mapRef}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -105,7 +100,7 @@ const RealtimeSocketMap = ({ role }) => {
         {bacs.map((bac) => (
           <Marker
             key={bac.id}
-            position={[bac.latitude, bac.longitude]}
+            position={[parseFloat(bac.latitude), parseFloat(bac.longitude)]}
             icon={createColoredIcon(getMarkerColor(bac.etat))}
           >
             <Popup>
@@ -116,7 +111,7 @@ const RealtimeSocketMap = ({ role }) => {
                   <p>Niveau : {bac.dernier_niveau}%</p>
                 )}
                 <p className="text-xs text-gray-500 mt-2">
-                  {bac.dernier_releve 
+                  {bac.dernier_releve
                     ? new Date(bac.dernier_releve).toLocaleString()
                     : 'Aucun relevé'}
                 </p>
