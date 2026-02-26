@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar = () => {
-  const { user, isAuthenticated, isMunicipalite, logout } = useAuth();
+  const { user, isAuthenticated, isMunicipalite, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -35,6 +35,12 @@ const Navbar = () => {
                 {isMunicipalite && (
                   <Link to="/bins" className="hover:bg-green-700 px-3 py-2 rounded">
                     Bacs
+                  </Link>
+                )}
+
+                {isAdmin && (
+                  <Link to="/admin" className="hover:bg-green-700 px-3 py-2 rounded">
+                    Administration
                   </Link>
                 )}
 
