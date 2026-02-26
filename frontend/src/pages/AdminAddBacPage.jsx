@@ -23,7 +23,7 @@ const AdminAddBacPage = () => {
     setMessage('');
 
     try {
-      const response = await api.post('api/bins', formData);
+      const response = await api.post('/bins', formData);
       setMessage('✅ Bac ajouté avec succès');
       console.log('Bac créé:', response.data);
       setFormData({
