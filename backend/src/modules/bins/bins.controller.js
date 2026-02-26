@@ -110,6 +110,56 @@ const binsController = {
       console.error('Erreur getPublicBacs:', error);
       res.status(500).json({ error: 'Erreur serveur' });
     }
+  },
+
+  // Ajouter un nouveau bac (admin / municipalité)
+  async createBac(req, res) {
+    try {
+      const { reference, latitude, longitude, type, capteur_id, proprietaire_id } = req.body;
+
+      if (!reference || !latitude || !longitude) {
+        return res.status(400).json({ 
+          error: 'Les champs reference, latitude et longitude sont requis' 
+        });
+      }
+
+      // Vérifier si le capteur est déjà utilisé
+      if (capteur_id) {
+        const existing = await pool.query(
+          'SELECT id FROM bacs WHERE capteur_id = $1',
+          [capteur_id]
+        );
+        if (existing.rows.length > 0) {
+          return res.status(400).json({ 
+            error: 'Ce capteur est déjà associé à un autre bac' 
+          });
+        }
+      }
+
+      // Insertion du nouveau bac
+      const result = await pool.query(
+        `INSERT INTO bacs (reference, latitude, longitude, type, capteur_id, proprietaire_id)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         RETURNING *`,
+        [reference, latitude, longitude, type, capteur_id || null, proprietaire_id || null]
+      );
+
+      res.status(201).json({
+        success: true,
+        message: 'Bac ajouté avec succès',
+        bac: result.rows[0]
+      });
+    } catch (error) {
+      console.error('Erreur createBac:', error);
+      
+      if (error.code === '23505') {
+        return res.status(400).json({ 
+          error: 'Un bac avec cette référence ou ce capteur existe déjà' 
+        });
+      }
+
+      res.status(500).json({ error: 'Erreur serveur' });
+    }
   }
 };
 

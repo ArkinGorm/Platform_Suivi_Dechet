@@ -35,6 +35,15 @@ const sensorsController = {
         [bac_id, niveau_remplissage, batterie, timestamp]
       );
 
+      // Après l'insertion réussie
+      const io = req.app.get('io');
+      io.emit('nouvelle-donnee-capteur', {
+        bac_id: bac_id,
+        niveau: niveau_remplissage,
+        timestamp: new Date()
+      });
+      console.log('📡 Événement temps réel émis');
+
       // Vérifier si le bac est plein (≥ 90%)
       const seuil_alerte = 90;
       if (niveau_remplissage >= seuil_alerte) {

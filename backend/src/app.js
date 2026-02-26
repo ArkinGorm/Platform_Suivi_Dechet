@@ -12,7 +12,7 @@ const usersRoutes = require('./modules/users/users.routes');
 const analyticsRoutes = require('./modules/analytics/analytics.routes');
 const collectesRoutes = require('./modules/collectes/collectes.routes');
 const exportsRoutes = require('./modules/exports/exports.routes');
-const routesRourtes = require('./modules/routes/routes.routes');
+const routesRoutes = require('./modules/routes/routes.routes');
 const predictionsRoutes = require('./modules/predictions/predictions.routes');
 const app = express();
 
@@ -30,13 +30,13 @@ app.use('/api/users', usersRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/collectes', collectesRoutes);
 app.use('/api/exports', exportsRoutes);
-app.use('/api/routes', routesRourtes);
+app.use('/api/routes', routesRoutes);
 app.use('/api/predictions', predictionsRoutes);
 
 // Route de test
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     message: 'API Smart Bins opérationnelle',
     timestamp: new Date().toISOString()
   });
